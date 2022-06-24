@@ -33,6 +33,7 @@ model Organization {
 
 model Stream {
     url          String    @id @unique
+    youtube_id   String    @unique
     title        String
     thumbnail    String
     live         Boolean

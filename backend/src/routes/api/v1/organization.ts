@@ -1,9 +1,21 @@
 import { FastifyPluginAsync } from "fastify"
 
-const example: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-    fastify.get('/organization/', async function (request, reply) {
-        return 'stream endpoint'
-    })
+interface IQueryString {
+  before?: string;
+  after?: string;
 }
 
-export default example;
+interface IHeaders {
+  'h-Custom': string;
+}
+
+const organization: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+  fastify.get<{
+    Querystring: IQueryString,
+    Headers: IHeaders
+  }>('/organization/', async function (request, reply) {
+    return 'stream endpoint'
+  })
+}
+
+export default organization;

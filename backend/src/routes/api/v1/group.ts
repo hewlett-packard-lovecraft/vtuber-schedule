@@ -2,8 +2,8 @@ import { FastifyPluginAsync } from "fastify"
 
 interface IQueryString {
     group_name: string;
-    before: string;
-    after: string;
+    before?: string;
+    after?: string;
 }
 
 interface IHeaders {
@@ -17,7 +17,11 @@ const group: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     }>('/group/', async function (request, reply) {
         try {
             const prisma = fastify.prisma;
-            const query = request.query;
+            const query: IQueryString = request.query;
+
+            if (!query.group_name) {
+                return this.httpErrors.badRequest;
+            }
 
             const data = await prisma.group.findUnique({
                 where: {
@@ -37,11 +41,7 @@ const group: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 data: data
             }
         } catch {
-            throw {
-                statusCode: 404,
-                message: `Group ${request.query.group_name} not found`
-            }
-
+            return this.httpErrors.notFound
         }
     })
 }

@@ -9,7 +9,6 @@ const fastify = Fastify()
 /**
  * stream-list-feed
  * - update stream list for hololive channels via youtube feed XML
- * - fetch information of <50 upcoming or live streams using youtube XML feed and update database
  * - run once per minute
  * - default to 10 videos per video
  * - xml feed is slow to update, rely on pubsub

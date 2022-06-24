@@ -30,73 +30,78 @@ export default new AsyncTask(
 
             fastify.log.info('itsakuralink_crawker: Fetched stream list ', body)
 
-            await updateDb(body)
 
-            fastify.log.info('itsakuralink_crawler: Saved stream list')
-        } else {
-            fastify.log.error(Error(`HTTP Error Response: ${response.status} ${response.statusText}`), `itsakuralink_crawler: itsakuralink fetch error: ${response.status}`)
-        }
-    },
-    (error) => {
-        fastify.log.error(error, 'itsakuralink_crawler: Uncaught error ');
-    }
-)
+            const events = body.data.events
+            const prisma = fastify.prisma;
+
+            if (!events) {
+                fastify.log.warn('itsakuralink_crawler: No streams fetched')
+                return;
+            }
+
+            for (const eventKey in events) {
+                const event = events[eventKey];
+
+                if (!event || !event.url || !event.name || !event.thumbnail || !event.startDate || !event.endDate) {
+                    fastify.log.debug(event, `itsakuralink_crawler: invalid event`)
+                    continue;
+                }
+
+                const eventInfo = event;
+
+                // add sanity checks
 
 
-const updateDb = async (data: ResponseData) => {
-    const events = data.data.events
-    const currentTime = new Date();
-    const prisma = fastify.prisma;
-
-    if (!events) {
-        fastify.log.warn('itsakuralink_crawler: No streams fetched')
-        return;
-    }
-
-    for (const eventKey in events) {
-        const event = events[eventKey];
-
-        await prisma.stream.upsert({
-            where: {
-                url: event.url
-            },
-            update: {
-                url: event.url,
-                title: event.name,
-                thumbnail: event.thumbnail,
-                live: false,
-                last_updated: currentTime,
-                start_date: new Date(event.startDate),
-                end_date: new Date(event.endDate),
-            },
-            create: {
-                url: event.url,
-                title: event.name,
-                thumbnail: event.thumbnail,
-                live: false,
-                last_updated: new Date(),
-                start_date: new Date(event.startDate),
-                end_date: new Date(event.endDate),
-                channel: {
-                    connectOrCreate: {
-                        where: {
-                            channel_name: event.livers[0].name,
-                        },
-                        create: {
-                            channel_name: event.livers[0].name,
-                            avatar: event.livers[0].avatar,
-                            youtube: "",
-                            youtube_id: event.livers[0].name,
-                            twitter: "",
-                            group: {
-                                connect: {
-                                    group_name: "NIJISANJI JP"
+                await prisma.stream.upsert({
+                    where: {
+                        url: eventInfo.url
+                    },
+                    update: {
+                        url: eventInfo.url,
+                        title: eventInfo.name,
+                        thumbnail: eventInfo.thumbnail,
+                        //live: false,
+                        //last_updated: currentTime,
+                        //start_date: new Date(eventInfo.startDate),
+                        //end_date: new Date(eventInfo.endDate),
+                    },
+                    create: {
+                        url: eventInfo.url,
+                        title: eventInfo.name,
+                        thumbnail: eventInfo.thumbnail,
+                        live: false,
+                        last_updated: new Date(),
+                        start_date: new Date(eventInfo.startDate),
+                        end_date: new Date(eventInfo.endDate),
+                        channel: {
+                            connectOrCreate: {
+                                where: {
+                                    channel_name: eventInfo.livers[0].name,
+                                },
+                                create: {
+                                    channel_name: eventInfo.livers[0].name,
+                                    avatar: eventInfo.livers[0].avatar,
+                                    youtube: "",
+                                    youtube_id: eventInfo.livers[0].name,
+                                    twitter: "",
+                                    group: {
+                                        connect: {
+                                            group_name: "NIJISANJI JP"
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                })
             }
-        })
+
+            fastify.log.info('itsakuralink_crawler: Saved stream list')
+        } else {
+            fastify.log.error({ err: Error(`HTTP Error Response: ${response.status} ${response.statusText}`) }, `itsakuralink_crawler: itsakuralink fetch error: ${response.status}`)
+        }
+    },
+    (error) => {
+        fastify.log.error({ err: error }, 'itsakuralink_crawler: Uncaught error ');
     }
-}
+)
