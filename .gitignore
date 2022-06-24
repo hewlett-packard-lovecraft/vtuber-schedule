@@ -1,0 +1,5 @@
+.env
+pgadmin_data/
+db-data/
+init.sql/
+node_modules/

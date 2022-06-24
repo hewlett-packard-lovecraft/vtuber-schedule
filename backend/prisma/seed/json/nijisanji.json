@@ -1,0 +1,200 @@
+{
+  "name": "Nijisanji",
+  "groupNames": [
+    "LazuLight",
+    "OBSYDIA",
+    "Ethyria",
+    "Luxiem",
+    "Noctyx",
+    "NIJISANJI ID",
+    "NIJISANJI JP"
+  ],
+  "groups": {
+    "Luxiem": [
+      {
+        "img": "assets/imgs/ike_profile.jpg",
+        "name": "Ike",
+        "group": "Luxiem",
+        "channelId": "UC4yNIKGvy-YUrwYupVdLDXA",
+        "youtube": "t.co/hTyg2xavZF",
+        "twitter": "twitter.com/ike_eveland"
+      },
+      {
+        "img": "assets/imgs/vox_profile.jpg",
+        "name": "Vox",
+        "group": "Luxiem",
+        "channelId": "UCckdfYDGrjojJM28n5SHYrA",
+        "youtube": "t.co/vKNOC3Nr5S",
+        "twitter": "twitter.com/Vox_Akuma "
+      },
+      {
+        "img": "assets/imgs/luca_profile.jpg",
+        "name": "Luca",
+        "group": "Luxiem",
+        "channelId": "UC7Gb7Uawe20QyFibhLl1lzA",
+        "youtube": "t.co/3gtlv10UA6",
+        "twitter": "twitter.com/luca_kaneshiro"
+      },
+      {
+        "img": "assets/imgs/mysta_profile.jpg",
+        "name": "Mysta",
+        "group": "Luxiem",
+        "channelId": "UCIM92Ok_spNKLVB5TsgwseQ",
+        "youtube": "t.co/zDhDXEWG5t",
+        "twitter": "twitter.com/Mysta_Rias "
+      },
+      {
+        "img": "assets/imgs/shu_profile.jpg",
+        "name": "Shu",
+        "group": "Luxiem",
+        "channelId": "UCG0rzBZV_QMP4MtWg6IjhEA",
+        "youtube": "t.co/pmO0oD7Z7V",
+        "twitter": "twitter.com/shu_yamino "
+      }
+    ],
+    "Noctyx": [
+      {
+        "img": "assets/imgs/fulgur_profile.jpg",
+        "name": "Fulgur",
+        "group": "Noctyx",
+        "channelId": "UCGhqxhovNfaPBpxfCruy9EA",
+        "youtube": "t.co/SHdAQvdg9w",
+        "twitter": "twitter.com/Fulgur_Ovid "
+      },
+      {
+        "img": "assets/imgs/alban_profile.jpg",
+        "name": "Alban",
+        "group": "Noctyx",
+        "channelId": "UCQ1zGxHrfEmmW4CPpBx9-qw",
+        "youtube": "t.co/My93c0L6HV",
+        "twitter": "twitter.com/alban_knox/ "
+      },
+      {
+        "img": "assets/imgs/sonny_profile.jpg",
+        "name": "Sonny",
+        "group": "Noctyx",
+        "channelId": "UCuuAb_72QzK0M1USPMEl1yw",
+        "youtube": "t.co/0cXVAQQI4m",
+        "twitter": "twitter.com/sonny_brisko "
+      },
+      {
+        "img": "assets/imgs/uki_profile.jpg",
+        "name": "Uki",
+        "group": "Noctyx",
+        "channelId": "UChJ5FTsHOu72_5OVx0rvsvQ",
+        "youtube": "t.co/sLBqq2cJlA",
+        "twitter": "twitter.com/uki_violeta "
+      },
+      {
+        "img": "assets/imgs/yugo_profile.jpg",
+        "name": "Yugo",
+        "group": "Noctyx",
+        "channelId": "UCSc_KzY_9WYAx9LghggjVRA",
+        "youtube": "t.co/WKF0Vx8fI9",
+        "twitter": "twitter.com/Yugo_Asuma "
+      }
+    ],
+
+    "Ethyria": [
+      {
+        "img": "assets/imgs/enna_profile.jpg",
+        "name": "Enna",
+        "group": "Ethyria",
+        "channelId": "UCR6qhsLpn62WVxCBK1dkLow",
+        "youtube": "www.youtube.com/channel/UCR6qhsLpn62WVxCBK1dkLow",
+        "twitter": "twitter.com/EnnaAlouette "
+      },
+      {
+        "img": "assets/imgs/nina_profile.jpg",
+        "name": "Nina",
+        "group": "Ethyria",
+        "channelId": "UCkieJGn3pgJikVW8gmMXE2w",
+        "youtube": "www.youtube.com/channel/UCkieJGn3pgJikVW8gmMXE2w",
+        "twitter": "twitter.com/NinaKosaka "
+      },
+      {
+        "img": "assets/imgs/millie_profile.jpg",
+        "name": "Millie",
+        "group": "Ethyria",
+        "channelId": "UC47rNmkDcNgbOcM-2BwzJTQ",
+        "youtube": "www.youtube.com/channel/UC47rNmkDcNgbOcM-2BwzJTQ",
+        "twitter": "twitter.com/MillieParfait "
+      },
+      {
+        "img": "assets/imgs/reimu_profile.jpg",
+        "name": "Reimu",
+        "group": "Ethyria",
+        "channelId": "UCBURM8S4LH7cRZ0Clea9RDA",
+        "youtube": "www.youtube.com/channel/UCBURM8S4LH7cRZ0Clea9RDA",
+        "twitter": "twitter.com/ReimuEndou "
+      }
+    ],
+
+    "OBSYDIA": [
+      {
+        "img": "assets/imgs/selen_profile.jpg",
+        "name": "Selen",
+        "group": "OBSYDIA",
+        "channelId": "UCV1xUwfM2v2oBtT3JNvic3w",
+        "youtube": "www.youtube.com/channel/UCV1xUwfM2v2oBtT3JNvic3w",
+        "twitter": "twitter.com/Selen_Tatsuki "
+      },
+      {
+        "img": "assets/imgs/rosemi_profile.jpg",
+        "name": "Rosemi",
+        "group": "OBSYDIA",
+        "channelId": "UC4WvIIAo89_AzGUh1AZ6Dkg",
+        "youtube": "www.youtube.com/channel/UC4WvIIAo89_AzGUh1AZ6Dkg",
+        "twitter": "twitter.com/Rosemi_Lovelock "
+      },
+      {
+        "img": "assets/imgs/petra_profile.jpg",
+        "name": "Petra",
+        "group": "OBSYDIA",
+        "channelId": "UCgA2jKRkqpY_8eysPUs8sjw",
+        "youtube": "www.youtube.com/channel/UCgA2jKRkqpY_8eysPUs8sjw",
+        "twitter": "twitter.com/Petra_Gurin "
+      }
+    ],
+
+    "LazuLight": [
+      {
+        "img": "assets/imgs/elira_profile.jpg",
+        "name": "Elira",
+        "group": "LazuLight",
+        "channelId": "UCIeSUTOTkF9Hs7q3SGcO-Ow",
+        "youtube": "www.youtube.com/channel/UCIeSUTOTkF9Hs7q3SGcO-Ow",
+        "twitter": "twitter.com/EliraPendora "
+      },
+      {
+        "img": "assets/imgs/pomu_profile.jpg",
+        "name": "Pomu",
+        "group": "LazuLight",
+        "channelId": "UCP4nMSTdwU1KqYWu3UH5DHQ",
+        "youtube": "www.youtube.com/channel/UCP4nMSTdwU1KqYWu3UH5DHQ",
+        "twitter": "twitter.com/PomuRainpuff "
+      },
+      {
+        "img": "assets/imgs/finana_profile.jpg",
+        "name": "Finana",
+        "group": "LazuLight",
+        "channelId": "UCu-J8uIXuLZh16gG-cT1naw",
+        "youtube": "www.youtube.com/channel/UCu-J8uIXuLZh16gG-cT1naw",
+        "twitter": "twitter.com/FinanaRyugu "
+      }
+    ],
+
+    "NIJISANJI ID": [
+      {
+        "img": "assets/imgs/mika_profile.jpg",
+        "name": "Mika",
+        "group": "NIJISANJI",
+        "channelId": "UCahgMxSIQ2zIRrPKhM6Mjvg",
+        "youtube": "www.youtube.com/channel/UCahgMxSIQ2zIRrPKhM6Mjvg",
+        "twitter": "twitter.com/MikaMelatika "
+      }
+    ],
+
+    "NIJISANJI JP": []
+  }
+}
