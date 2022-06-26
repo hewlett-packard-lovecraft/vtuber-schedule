@@ -14,33 +14,29 @@ const organization: FastifyPluginAsync = async (fastify, opts): Promise<void> =>
     Headers: IHeaders
   }>('/organization/', async function (request, reply) {
     if (!request.query.org) {
-      return await fastify.prisma.organization.findMany()
+      return { organizations: await fastify.prisma.organization.findMany() }
     }
 
-    const orgNameList = request.query.org.split(',').map(
-      orgName => orgName.trim()
-    )
+    const orgName = request.query.org.trim()
 
-    const dbReads = orgNameList.map((orgName) => {
-      return fastify.prisma.organization.findUnique({
-        where: {
-          name: orgName,
-        },
-        include: {
-          groups: {
-            include: {
-              channels: {
-                include: {
-                  streams: true
-                }
+    const org = await fastify.prisma.organization.findUnique({
+      where: {
+        name: orgName,
+      },
+      include: {
+        groups: {
+          include: {
+            channels: {
+              include: {
+                streams: true
               }
             }
           }
         }
-      })
+      }
     })
 
-    return await fastify.prisma.$transaction(dbReads);
+    return { organization: org }
   })
 }
 

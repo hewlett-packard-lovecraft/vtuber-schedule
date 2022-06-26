@@ -9,6 +9,5 @@ test('default root route', async (t) => {
     url: '/',
   })
 
-  console.log(res.statusCode)
-  //t.equal(res.statusCode, 200)
+  t.equal(res.statusCode, 200)
 })

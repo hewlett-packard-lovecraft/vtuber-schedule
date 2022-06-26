@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from 'fastify-plugin'
-import { SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
+import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 
 // import tasks
 import itsukaralink from "./tasks/itsakuralink-api";
@@ -27,25 +27,41 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     const itsukaralinkJob = new SimpleIntervalJob(
         {
             minutes: parseInt(process.env.ITSAKURALINK_CRAWLER_INTERVAL as string) || 10,
+            runImmediately: true
         },
-        itsukaralink,
+        new AsyncTask(
+            'itsukaralink_crawler',
+            () => itsukaralink(fastify),
+            (error) => {
+                fastify.log.error({ err: error }, 'itsakuralink_crawler: Uncaught error ');
+            }
+        ),
         "itsakuralink_crawler",
     )
 
     // fetch new videos from youtube XML feed API
     const streamListFeedJob = new SimpleIntervalJob(
         {
-            minutes: parseInt(process.env.XML_FEED_API_CRAWLER_INTERVAL as string) || 2,
+            minutes: parseInt(process.env.XML_FEED_API_CRAWLER_INTERVAL as string) || 10,
         },
-        streamListFeed,
-        "stream_list_feed"
+
+        new AsyncTask(
+            'stream-list-feed',
+            () => streamListFeed(fastify),
+            (err) => { fastify.log.error(err, `stream_list_feed: Uncaught error`) }
+        ),
+        'stream-list-feed',
     )
 
     const streamStatusJob = new SimpleIntervalJob(
         {
-            minutes: parseInt(process.env.STREAM_LIST_FEED_INTERVAL as string) || 15
+            minutes: parseInt(process.env.STREAM_LIST_FEED_INTERVAL as string) || 2
         },
-        streamStatus,
+        new AsyncTask(
+            'fetch video info',
+            () => streamStatus(fastify),
+            (error) => { fastify.log.error({ err: error }, "fetch_video_status: uncaught error") }
+        ),
         "stream_status"
     )
 
@@ -53,10 +69,13 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     fastify.log.info('Crawler started at %s', new Date());
 
     // load tasks
-    scheduler.addSimpleIntervalJob(itsukaralinkJob)
-    scheduler.addIntervalJob(streamListFeedJob)
-    scheduler.addIntervalJob(streamStatusJob)
-
+    fastify.ready().then(
+        () => {
+            scheduler.addSimpleIntervalJob(streamListFeedJob)
+            scheduler.addSimpleIntervalJob(itsukaralinkJob)
+            scheduler.addSimpleIntervalJob(streamStatusJob)
+        }
+    )
 
     // attach the Toad Scheduler instance to fastify & stop on server close
     fastify.decorate("scheduler", scheduler);

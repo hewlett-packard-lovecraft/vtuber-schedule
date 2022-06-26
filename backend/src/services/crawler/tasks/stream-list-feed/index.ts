@@ -1,22 +1,20 @@
-import { AsyncTask } from "toad-scheduler";
-import Fastify from "fastify"
+import { FastifyInstance } from "fastify"
 import axios from "axios";
 import xml2json from "xml2json"
 import { XMLFeedAPIResponse } from "./types";
 
-const fastify = Fastify()
-
 /**
  * stream-list-feed
- * - update stream list for hololive channels via youtube feed XML
+ * - This function updates stream list for hololive channels via youtube feed XML
  * - run once per minute
  * - default to 10 videos per video
  * - xml feed is slow to update, rely on pubsub
  */
 
-export default new AsyncTask(
-    'stream-list-feed',
-    async () => {
+export default
+    async (fastify: FastifyInstance) => {
+        fastify.log.info("stream-list-feed: START")
+
         const channels_per_crawl = parseInt(process.env.STREAM_LIST_FEED_CHANNELS_PER_RUN as string) | 10
         const currentTime = new Date()
 
@@ -32,6 +30,12 @@ export default new AsyncTask(
             },
             take: channels_per_crawl
         })
+
+        const targetChannelIds = targetChannels.map(channel => {
+            return channel.youtube_id
+        })
+
+        fastify.log.info(`stream_list_feed: fetching video list for ${targetChannelIds.length} channels`, targetChannelIds)
 
         // Convert channels into promises to fetch their feed XMLs
         const xmlFetches = targetChannels.map((crawlChannel) => (
@@ -70,13 +74,15 @@ export default new AsyncTask(
         const videoList = (await Promise.all(xmlFetches)).flat()
 
         if (!videoList || !videoList.length) {
-            fastify.log.debug(`video_list_feed: No videos fetched`)
+            fastify.log.debug(`stream_list_feed: No videos fetched`)
             return;
+        } else {
+            fastify.log.info(`fetched ${videoList.length} videos`)
         }
 
 
-        const dbWrites = videoList.map((videoInfo) => {
-            return fastify.prisma.stream.upsert({
+        videoList.forEach(async (videoInfo) => {
+            await fastify.prisma.stream.upsert({
                 where: {
                     url: videoInfo.link.href
                 },
@@ -84,6 +90,7 @@ export default new AsyncTask(
                     url: videoInfo.link.href,
                     title: videoInfo.title,
                     thumbnail: videoInfo["media:group"]["media:thumbnail"].url,
+                    youtube_id: videoInfo["yt:videoId"],
                     live: false,
                     last_updated: currentTime,
                     start_date: videoInfo.published, // wait for stream-status task to fetch true start/end time from youtube api
@@ -100,17 +107,11 @@ export default new AsyncTask(
                     thumbnail: videoInfo["media:group"]["media:thumbnail"].url,
                     last_updated: currentTime
                 }
+            }).catch((error) => {
+                fastify.log.error(error, `stream_list_feed: Failed to save to database`)
             })
         })
 
-        try {
-            await fastify.prisma.$transaction(dbWrites)
-            fastify.log.info(`video_list_feed: Saved ${videoList.length} videos to database`)
-
-            fastify.log.debug(`Saved: ${videoList.map(entry => entry["yt:videoId"])}`)
-        } catch (error) {
-            fastify.log.error(error, `video_list_feed: Failed to save to database`)
-        }
-    },
-    (err) => { fastify.log.error(err, `video_list_feed: Uncaught error`) }
-)
+        fastify.log.info(`stream_list_feed: Saved ${videoList.length} videos to database`)
+        fastify.log.debug(`Saved: ${videoList.map(entry => entry["yt:videoId"])}`)
+    }

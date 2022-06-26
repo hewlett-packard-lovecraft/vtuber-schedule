@@ -9,6 +9,5 @@ test('GET `/api/organization/ route`', async (t) => {
         method: 'GET'
     })
 
-    console.log('body: ', res.body)
-    //t.equal(res.statusCode, 200)
+    t.equal(res.statusCode, 200)
 })

@@ -1,22 +1,17 @@
-import Fastify from "fastify";
-import { AsyncTask } from "toad-scheduler";
+import { FastifyInstance } from "fastify";
 import axios from "axios";
 import { ResponseData } from './types'
 
 const itsakura_url = "https://api.itsukaralink.jp/v1.2/events.json";
 
-const fastify = Fastify({
-    logger: true
-});
 
 /**
  * itsukaralink-api
- * - fetch nijsanji JP streams from https://api.itsukaralink.jp/v1.2/events.json
+ * - This function fetches nijsanji JP streams from https://api.itsukaralink.jp/v1.2/events.json
  */
 
-export default new AsyncTask(
-    'itsukaralink_crawler',
-    async () => {
+export default
+    async (fastify: FastifyInstance) => {
         fastify.log.info("itsakuralink_crawler: START")
 
         const response = await axios({
@@ -50,6 +45,7 @@ export default new AsyncTask(
                 const eventInfo = event;
 
                 // add sanity checks
+                const videoID = String(eventInfo.url.split('?v=')[1])
 
 
                 await prisma.stream.upsert({
@@ -69,6 +65,7 @@ export default new AsyncTask(
                         url: eventInfo.url,
                         title: eventInfo.name,
                         thumbnail: eventInfo.thumbnail,
+                        youtube_id: videoID,
                         live: false,
                         last_updated: new Date(),
                         start_date: new Date(eventInfo.startDate),
@@ -77,6 +74,7 @@ export default new AsyncTask(
                             connectOrCreate: {
                                 where: {
                                     channel_name: eventInfo.livers[0].name,
+                                    youtube_id: eventInfo.livers[0].name,
                                 },
                                 create: {
                                     channel_name: eventInfo.livers[0].name,
@@ -100,8 +98,4 @@ export default new AsyncTask(
         } else {
             fastify.log.error({ err: Error(`HTTP Error Response: ${response.status} ${response.statusText}`) }, `itsakuralink_crawler: itsakuralink fetch error: ${response.status}`)
         }
-    },
-    (error) => {
-        fastify.log.error({ err: error }, 'itsakuralink_crawler: Uncaught error ');
     }
-)
