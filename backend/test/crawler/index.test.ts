@@ -9,4 +9,6 @@ test('fastify-scheduler plugin', async (t) => {
 
     t.ok(!!fastify.lastUpdated)
     t.ok(!!fastify.scheduler)
+
+    await fastify.close()
 })

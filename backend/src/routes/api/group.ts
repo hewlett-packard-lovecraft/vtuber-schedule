@@ -20,7 +20,7 @@ const group: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             const query: IQueryString = request.query;
 
             if (!query.group_name) {
-                return prisma.group.findMany({
+                const groups = await prisma.group.findMany({
                     include: {
                         channels: {
                             include: {
@@ -29,6 +29,8 @@ const group: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                         }
                     }
                 })
+
+                return { group: groups }
             }
 
             const data = await prisma.group.findUnique({

@@ -14,7 +14,20 @@ const organization: FastifyPluginAsync = async (fastify, opts): Promise<void> =>
     Headers: IHeaders
   }>('/organization/', async function (request, reply) {
     if (!request.query.org) {
-      return { organizations: await fastify.prisma.organization.findMany() }
+      const org = await fastify.prisma.organization.findMany({
+        include: {
+          groups: {
+            include: {
+              channels: {
+                include: {
+                  streams: true
+                }
+              }
+            }
+          }
+        }
+      })
+      return { organization: org }
     }
 
     const orgName = request.query.org.trim()
