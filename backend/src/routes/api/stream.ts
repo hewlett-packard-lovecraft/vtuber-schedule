@@ -36,10 +36,8 @@ const stream: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 }
             })
 
-            return {
-                "status": 200,
-                "data": data
-            }
+            return data;
+        
         } catch (error) {
             throw {
                 statusCode: 400,

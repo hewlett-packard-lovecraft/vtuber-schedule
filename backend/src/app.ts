@@ -13,6 +13,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   opts
 ): Promise<void> => {
   // Place here your custom code!
+  void fastify.register(crawlerPlugin) // Start crawler service and load plugins
 
   // Do not touch the following lines
 
@@ -30,9 +31,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     dir: join(__dirname, 'routes'),
     options: opts
   })
-
-  // Start crawler service and load plugins
-  void fastify.register(crawlerPlugin)
 
 };
 
