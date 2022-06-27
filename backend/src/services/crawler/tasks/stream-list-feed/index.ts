@@ -11,11 +11,12 @@ import { XMLFeedAPIResponse } from "./types";
  * - xml feed is slow to update, rely on pubsub
  */
 
+
 export default
     async (fastify: FastifyInstance) => {
         fastify.log.info("stream-list-feed: START")
 
-        const channels_per_crawl = parseInt(process.env.STREAM_LIST_FEED_CHANNELS_PER_RUN as string) | 10
+        const channels_per_crawl = parseInt(process.env.XML_FEED_API_CHANNELS_PER_RUN as string) | 10
         const currentTime = new Date()
 
         // list hololive channels sorted by oldest
@@ -35,7 +36,7 @@ export default
             return channel.youtube_id
         })
 
-        fastify.log.info(`stream_list_feed: fetching video list for ${targetChannelIds.length} channels`, targetChannelIds)
+        fastify.log.info(`stream_list_feed: fetching video list for ${targetChannelIds.length} channels \n ${targetChannelIds}`)
 
         // Convert channels into promises to fetch their feed XMLs
         const xmlFetches = targetChannels.map((crawlChannel) => (
@@ -63,7 +64,7 @@ export default
                     // Catch and log error, return null to skip rest of module
                     fastify.log.error(
                         error,
-                        `video_list_feed: Error fetching video list from XML feed for channel ${crawlChannel.youtube_id}`
+                        `stream_list_feed: Error fetching video list from XML feed for channel ${crawlChannel.youtube_id}`
                     );
                     // Return an empty video list so it will not interfere succeeding processes
                     return [];
@@ -77,11 +78,15 @@ export default
             fastify.log.debug(`stream_list_feed: No videos fetched`)
             return;
         } else {
-            fastify.log.info(`fetched ${videoList.length} videos`)
+            fastify.log.info(`fetched ${videoList.length} streams`)
         }
 
+        // upsert fetched videos
+        for (const videoInfo of videoList) {
+            if (!videoInfo) {
+                continue;
+            }
 
-        videoList.forEach(async (videoInfo) => {
             await fastify.prisma.stream.upsert({
                 where: {
                     url: videoInfo.link.href
@@ -105,13 +110,18 @@ export default
                     url: videoInfo.link.href,
                     title: videoInfo.title,
                     thumbnail: videoInfo["media:group"]["media:thumbnail"].url,
-                    last_updated: currentTime
+                    last_updated: currentTime,
+                    channel: {
+                        update: {
+                            last_updated: currentTime
+                        }
+                    }
                 }
             }).catch((error) => {
-                fastify.log.error(error, `stream_list_feed: Failed to save to database`)
+                fastify.log.error(error, `stream_list_feed: Failed to save video ${videoInfo.id} to database`)
             })
-        })
+        }
 
-        fastify.log.info(`stream_list_feed: Saved ${videoList.length} videos to database`)
         fastify.log.debug(`Saved: ${videoList.map(entry => entry["yt:videoId"])}`)
+        fastify.log.info(`stream_list_feed: Saved ${videoList.length} videos to database`)
     }

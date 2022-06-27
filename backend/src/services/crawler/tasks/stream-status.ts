@@ -18,7 +18,7 @@ const streamStatus = async (fastify: FastifyInstance) => {
     const currentDate = new Date()
 
     // find currently live videos
-    const targetStreams = await prisma.stream.findMany(
+    let targetStreams = await prisma.stream.findMany(
         {
             where: {
                 live: true
@@ -27,13 +27,13 @@ const streamStatus = async (fastify: FastifyInstance) => {
     )
 
     // if target_streams <50, append lowest last_updated to list
-    targetStreams.concat(
+    targetStreams = targetStreams.concat(
         targetStreams,
         await prisma.stream.findMany(
             {
                 where: {
                     start_date: {
-                        gte: currentDate
+                        gte: new Date(currentDate.getTime() - 12 * 60 * 60 * 1000) // 12 hrs before
                     }
                 },
                 orderBy: {
@@ -46,7 +46,7 @@ const streamStatus = async (fastify: FastifyInstance) => {
 
     // find video IDs
     const targetVideoIDs = targetStreams.map(
-        (targetVideo) => String(targetVideo.url.split('?v=')[1])
+        (targetVideo) => targetVideo.youtube_id
     )
 
     fastify.log.info(`fetch_video_status: target video IDs: ${targetVideoIDs}`)
@@ -151,7 +151,12 @@ const streamStatus = async (fastify: FastifyInstance) => {
                 start_date: savedInfo.start_date,
                 end_date: savedInfo.end_date,
                 live: savedInfo.live,
-                last_updated: savedInfo.updated_at
+                last_updated: savedInfo.updated_at,
+                channel: {
+                    update: {
+                        last_updated: savedInfo.updated_at
+                    }
+                }
             }
         });
 

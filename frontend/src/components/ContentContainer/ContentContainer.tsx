@@ -5,16 +5,16 @@ import './ContentContainer.css'
 
 interface IContentContainerProps {
     isSidebarActive: boolean;
+    lastUpdatedAt: Date;
 }
 
-const d = new Date();
 
 function ContentContainer(props: IContentContainerProps) {
 
     return (
         <>
             <div className={`content ${props.isSidebarActive ? 'active' : ''}`}>
-                <Navbar last_updated={d} />
+                <Navbar last_updated={props.lastUpdatedAt} />
             </div>
         </>
     );

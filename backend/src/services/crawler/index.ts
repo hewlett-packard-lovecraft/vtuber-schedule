@@ -22,16 +22,20 @@ declare module 'fastify' {
 
 const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     const scheduler = new ToadScheduler();
+    const currentTime = new Date()
 
     // Fetch list of videos from itsakuralink.jp
     const itsukaralinkJob = new SimpleIntervalJob(
         {
             minutes: parseInt(process.env.ITSAKURALINK_CRAWLER_INTERVAL as string) || 10,
-            runImmediately: true
         },
         new AsyncTask(
             'itsukaralink_crawler',
-            () => itsukaralink(fastify),
+            () => itsukaralink(fastify)
+                .then(() => {
+                    fastify.lastUpdated = currentTime
+                })
+            ,
             (error) => {
                 fastify.log.error({ err: error }, 'itsakuralink_crawler: Uncaught error ');
             }
@@ -42,12 +46,17 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     // fetch new videos from youtube XML feed API
     const streamListFeedJob = new SimpleIntervalJob(
         {
-            minutes: parseInt(process.env.XML_FEED_API_CRAWLER_INTERVAL as string) || 10,
+            minutes: parseInt(process.env.XML_FEED_API_CRAWLER_INTERVAL as string) || 15,
+            runImmediately: true
         },
 
         new AsyncTask(
             'stream-list-feed',
-            () => streamListFeed(fastify),
+            () => streamListFeed(fastify)
+                .then(() => {
+                    fastify.lastUpdated = currentTime
+                })
+            ,
             (err) => { fastify.log.error(err, `stream_list_feed: Uncaught error`) }
         ),
         'stream-list-feed',
@@ -55,11 +64,15 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
 
     const streamStatusJob = new SimpleIntervalJob(
         {
-            minutes: parseInt(process.env.STREAM_LIST_FEED_INTERVAL as string) || 2
+            minutes: parseInt(process.env.UPDATE_STREAM_STATUS_INTERVAL as string) || 2
         },
         new AsyncTask(
             'fetch video info',
-            () => streamStatus(fastify),
+            () => streamStatus(fastify)
+                .then(() => {
+                    currentTime
+                })
+            ,
             (error) => { fastify.log.error({ err: error }, "fetch_video_status: uncaught error") }
         ),
         "stream_status"
@@ -68,7 +81,7 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     // log crawler
     fastify.log.info('Crawler started at %s', new Date());
 
-    // load tasks
+    // load tasks after all plugins have been loaded
     fastify.ready().then(
         () => {
             scheduler.addSimpleIntervalJob(streamListFeedJob)
