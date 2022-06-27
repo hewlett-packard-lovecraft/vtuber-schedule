@@ -166,7 +166,7 @@ const streamStatus = async (fastify: FastifyInstance) => {
         await Promise.all(saveDb)
         fastify.log.info(`fetch_video_status: Successfully saved to database`)
     } catch (error) {
-        fastify.log.error("fetch_video_status: Unable to save to database", { err: error })
+        fastify.log.error("fetch_video_status: Error when saving to database", { err: error })
     }
 
 }

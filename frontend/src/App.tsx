@@ -13,29 +13,28 @@ function App() {
   let [streamData, setStreamData] = useState(new Array<Organization>());
 
 
-  const updateStreamData = () => {
-    const isPageActive = (document.visibilityState === 'visible');
-    refresh(isPageActive, streamData, lastUpdatedAt)
-      .then((output) => {
-        const [latestStreamData, apiLastUpdateDate] = output;
-        setStreamData(latestStreamData as Organization[])
-        setLastUpdatedAt(new Date(apiLastUpdateDate as Date))
-      })
-  }
-
   useEffect(() => {
-    updateStreamData()
+    const updateStreamData = () => {
+      const isPageActive = (document.visibilityState === 'visible');
+      refresh(isPageActive, streamData, lastUpdatedAt)
+        .then((output) => {
+          const [latestStreamData, apiLastUpdateDate] = output;
+          setStreamData(latestStreamData as Organization[])
+          setLastUpdatedAt(new Date(apiLastUpdateDate as Date))
+        })
+    }
 
     const interval =
       setInterval(
         () => updateStreamData()
         , 15 * 1000
-      )
-    // poll for new data immediately and then every 30 seconds
+      ) // poll for new data immediately and then every 30 seconds
+
+    updateStreamData()
 
     return () => clearInterval(interval) // clear interval when the component unmounts
 
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div id='layout' className={`App ${isSidebarActive ? 'active' : ''}`}>
