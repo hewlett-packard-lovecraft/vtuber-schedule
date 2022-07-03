@@ -2,14 +2,16 @@ import { organizationResponse } from "./types"
 
 /**
  * fetchOrganization()
- * This async function makes a GET request to /api/organization/
+ * @params {Date} before - fetch streams scheduled to start before this date
+ * @params {Date} after - fetch streams scheduled to start after this date
+ * This async function makes a GET request to /api/organization/?before={}?after={}
  */
 
 
-const fetchOrganization = async () => {
+const fetchOrganization = async (before: Date, after: Date) => {
     console.log(`[${new Date()}]`, 'fetchOrganization(): START')
 
-    const url = '/api/organization/'
+    let url = `/api/organization/?before=${before.toISOString()}&?after=${after.toISOString()}`
 
     try {
         const response = await fetch(url)

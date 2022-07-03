@@ -1,8 +1,8 @@
 import { FastifyPluginAsync } from "fastify"
 
 interface IQueryString {
-    before?: string;
-    after?: string;
+    before: string;
+    after: string;
 }
 
 interface IHeaders {
@@ -15,8 +15,10 @@ const stream: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         Headers: IHeaders
     }>('/stream/', async function (request, reply) {
         const query = request.query;
-        let before_date = new Date(Date.now() + (14 * 24 * 60 * 60 * 60 * 1000)); // default to today + 14d
-        let after_date = new Date(0);
+        fastify.log.info(query)
+
+        let before_date = new Date(Date.now() + (2 * 24 * 60 * 60 * 1000)); // default to today + 2d
+        let after_date = new Date(Date.now() - (2 * 24 * 60 * 60 * 1000)); // default to today - 2d
 
         if (query.before) {
             before_date = new Date(query.before);
@@ -31,7 +33,7 @@ const stream: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 where: {
                     start_date: {
                         gte: after_date,
-                        lte: before_date
+                        lt: before_date
                     }
                 }
             })
@@ -39,6 +41,8 @@ const stream: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             return { streams: data };
 
         } catch (error) {
+            fastify.log.error(Error)
+
             throw {
                 statusCode: 400,
                 message: "HTTP Error 400 Bad Request"

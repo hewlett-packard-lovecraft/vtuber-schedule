@@ -47,7 +47,6 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     const streamListFeedJob = new SimpleIntervalJob(
         {
             minutes: parseInt(process.env.XML_FEED_API_CRAWLER_INTERVAL as string) || 15,
-            runImmediately: true
         },
 
         new AsyncTask(
@@ -64,7 +63,7 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
 
     const streamStatusJob = new SimpleIntervalJob(
         {
-            minutes: parseInt(process.env.UPDATE_STREAM_STATUS_INTERVAL as string) || 2
+            minutes: parseInt(process.env.UPDATE_STREAM_STATUS_INTERVAL as string) || 2,
         },
         new AsyncTask(
             'fetch video info',
@@ -73,7 +72,7 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
                     currentTime
                 })
             ,
-            (error) => { fastify.log.error({ err: error }, "fetch_video_status: uncaught error") }
+            (error) => { fastify.log.error({ err: error }, "fetch_stream_status: uncaught error") }
         ),
         "stream_status"
     )

@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 export interface Organization {
     name: string;
     groups: Group[];
@@ -10,8 +12,8 @@ export interface Group {
 }
 
 export interface Channel {
-    channelName: string;
-    youtubeID: string;
+    channel_name: string;
+    youtube_id: string;
     youtube: string;
     twitter: string;
     avatar: string;
@@ -22,13 +24,27 @@ export interface Channel {
 
 export interface Stream {
     url: string;
-    youtubeID: string;
+    youtube_id: string;
     title: string;
     thumbnail: string;
     live: boolean;
-    lastUpdated: Date;
-    startDate: Date;
-    endDate: Date;
-    channelName: string;
+    lastUpdated: string;
+    start_date: string;
+    end_date: string;
+    channel_name: string;
+}
+
+export interface StreamCard {
+    org_name: string;
+    group_name: string;
+    channel: Channel;
+    url: string;
+    youtube_id: string;
+    title: string;
+    thumbnail: string;
+    live: boolean;
+    lastUpdated: DateTime;
+    start_date: DateTime;
+    end_date: DateTime;
 }
 

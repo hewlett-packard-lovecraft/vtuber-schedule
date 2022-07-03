@@ -1,4 +1,4 @@
-import { Organization } from "../types/types"
+import { StreamCard } from "../types/types"
 import fetchLastUpdateDate from "./last_update_date";
 import fetchOrganization from "./organization"
 
@@ -14,36 +14,40 @@ import fetchOrganization from "./organization"
  */
 
 
-const refresh = async (pageActive: boolean, data: Organization[], lastUpdatedAt: Date) => {
-    console.log(`[${new Date()}]`,'refresh(): START')
+const refresh = async (pageActive: boolean, streamCards: StreamCard[], lastUpdatedAt: Date) => {
+    console.log(`[${new Date()}]`, 'refresh(): START')
 
     if (!pageActive) { // skip update if page is inactive
-        console.log(`[${new Date()}]`,'refresh(): Page is inactive, skipping update')
-        return [data, lastUpdatedAt]
+        console.log(`[${new Date()}]`, 'refresh(): Page is inactive, skipping update')
+        return;
     }
 
-    const apiLastUpdateDate = (await fetchLastUpdateDate())?.lastUpdatedAt
+    const lastUpdateDateLatest = (await fetchLastUpdateDate())?.lastUpdatedAt
 
-    if (!apiLastUpdateDate) {
+    if (!lastUpdateDateLatest) {
         console.error('refresh(): failed to fetch last update date')
-        return [data, lastUpdatedAt]
+        return;
     }
 
-    // fetch new data from the API only if data has been updated, or if data is empty
-    if ((apiLastUpdateDate > lastUpdatedAt) || (!data || data.length === 0)) {
-        const dataLatest = (await fetchOrganization())?.organization;
+    // fetch new data from the API only if data has been updated since the last refresh or if internal state is empty
+    if ((lastUpdateDateLatest > lastUpdatedAt) || (!streamCards || streamCards.length === 0)) {
+        const dataLatest = (await fetchOrganization(
+            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+        ))?.organization; // fetch streams 2 days old or 7 days in the future
 
         if (!dataLatest) {
             console.error('refresh(): failed to fetch data')
-            return [data, apiLastUpdateDate]
+            return;
         } else {
-            console.log(`[${new Date()}]`,'refreshed() successfully updated stream data')
-            return [dataLatest, apiLastUpdateDate]
+            console.log(`[${new Date()}]`, 'refreshed() successfully updated stream data')
+            return [dataLatest, lastUpdateDateLatest]
         }
     }
 
-    console.log(`[${new Date()}]`,'refresh(): no updates to be made')
-    return [data, lastUpdatedAt]
+    console.log(`[${new Date()}]`, 'refresh(): no updates to be made')
+    return [streamCards, lastUpdatedAt]
 }
+
 
 export default refresh;
