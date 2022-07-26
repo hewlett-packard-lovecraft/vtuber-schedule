@@ -70,3 +70,14 @@ export interface Media {
     width: string;
     height: string;
 }
+
+export interface Video {
+    url: string;
+    title: string;
+    thumbnail: string;
+    youtube_id: string;
+    channel_id: string;
+    live: boolean;
+    start_time: Date;
+    end_time: Date;
+}

@@ -135,7 +135,7 @@ const streamStatus = async (fastify: FastifyInstance) => {
 
 
         // endless sanity checks
-        const savedInfo = {
+        let savedInfo = {
             end_date: new Date(liveStreamingDetails.scheduledEndTime),
             start_date: new Date(liveStreamingDetails.scheduledStartTime),
             live: false,

@@ -21,22 +21,22 @@ function toStreamCard(streamData: Organization[]) {
         (channel) => channel.streams.flatMap(
           (stream) => ({
             org_name: org.name,
-            group_name: group.groupName,
+            group_name: group.group_name,
             channel: {
               channel_name: channel.channel_name,
               youtube_id: channel.youtube_id,
               youtube: channel.youtube,
               twitter: channel.twitter,
               avatar: channel.avatar,
-              lastUpdated: channel.lastUpdated,
-              groupName: channel.groupName,
+              last_updated: channel.last_updated,
+              group_name: channel.group_name,
             } as Channel,
             url: stream.url,
             youtube_id: stream.youtube_id,
             title: stream.title,
             thumbnail: stream.thumbnail,
             live: stream.live,
-            lastUpdated: DateTime.fromISO(stream.lastUpdated),
+            lastUpdated: DateTime.fromISO(stream.last_updated),
             start_date: DateTime.fromISO(stream.start_date),
             end_date: DateTime.fromISO(stream.end_date),
           } as StreamCard)
@@ -94,8 +94,21 @@ function App() {
             <Sidebar sidebarVisibility={displaySidebar} />
             <Routes>
               <Route path="/" element={<ContentContainer lastUpdatedAt={lastUpdatedAt} streamList={streamList} />} />
-              <Route path="/hololive/en/" element={<ContentContainer lastUpdatedAt={lastUpdatedAt} streamList={streamList} />} />
-              <Route path="/hololive/" element={<ContentContainer lastUpdatedAt={lastUpdatedAt} streamList={streamList} />} />
+              <Route path=":orgId"
+                element={
+                  <ContentContainer
+                    lastUpdatedAt={lastUpdatedAt}
+                    streamList={streamList}
+                  />}
+              >
+                <Route path=":groupId"
+                  element={
+                    <ContentContainer
+                      lastUpdatedAt={lastUpdatedAt}
+                      streamList={streamList}
+                    />}
+                />
+              </Route>
             </Routes>
           </Row>
         </Container>

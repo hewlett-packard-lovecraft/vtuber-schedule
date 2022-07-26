@@ -42,9 +42,9 @@ function Navbar(props: INavbarProps) {
                 </div>
 
                 <Nav>
-                    <div className="nav-item text-nowrap">
-                        <a className="nav-link px-3" href="/">Sign In</a>
-                    </div>
+                    <Nav.Item className="text-nowrap">
+                        <Nav.Link className="px-3" onClick={() => alert("Not implemented")}>Sign In</Nav.Link>
+                    </Nav.Item>
                 </Nav>
             </NavbarBootstrap.Collapse>
         </NavbarBootstrap>

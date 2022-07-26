@@ -6,8 +6,8 @@ export interface Organization {
 }
 
 export interface Group {
-    groupName: string;
-    orgName: string;
+    group_name: string;
+    org_name: string;
     channels: Channel[];
 }
 
@@ -17,8 +17,8 @@ export interface Channel {
     youtube: string;
     twitter: string;
     avatar: string;
-    lastUpdated: Date;
-    groupName: string;
+    last_updated: Date;
+    group_name: string;
     streams: Stream[];
 }
 
@@ -28,7 +28,7 @@ export interface Stream {
     title: string;
     thumbnail: string;
     live: boolean;
-    lastUpdated: string;
+    last_updated: string;
     start_date: string;
     end_date: string;
     channel_name: string;

@@ -28,6 +28,7 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
     const itsukaralinkJob = new SimpleIntervalJob(
         {
             minutes: parseInt(process.env.ITSAKURALINK_CRAWLER_INTERVAL as string) || 10,
+            runImmediately: true
         },
         new AsyncTask(
             'itsukaralink_crawler',
@@ -63,7 +64,7 @@ const crawlerPlugin: FastifyPluginAsync = fp(async (fastify, opts) => {
 
     const streamStatusJob = new SimpleIntervalJob(
         {
-            minutes: parseInt(process.env.UPDATE_STREAM_STATUS_INTERVAL as string) || 2,
+            minutes: parseInt(process.env.UPDATE_STREAM_STATUS_INTERVAL as string) || 1,
         },
         new AsyncTask(
             'fetch video info',

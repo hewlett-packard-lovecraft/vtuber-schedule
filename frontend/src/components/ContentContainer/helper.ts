@@ -1,4 +1,5 @@
 import { StreamCard } from '../../types/types'
+import groups from './groups';
 
 /**
  * Sort input by most recent start_date, then filter out past & offline streams
@@ -6,15 +7,10 @@ import { StreamCard } from '../../types/types'
  * @returns Stream[] filtered stream list
  */
 
-export function filterScheduled(streams: StreamCard[]) {
-    streams = sortByDate(streams, 'asc')
-    let streamList = []
-
-    for (const stream of streams) {
-        if (stream.start_date.diffNow('milliseconds').milliseconds >= 0 || stream.live) {
-            streamList.push(stream)
-        }
-    }
+export function filterScheduled(streams: StreamCard[]): StreamCard[] {
+    const streamList = sortByDate(streams, 'asc').filter(
+        (stream) => stream.start_date.diffNow('milliseconds').milliseconds >= 0 || stream.live
+    );
 
     return streamList;
 }
@@ -25,20 +21,51 @@ export function filterScheduled(streams: StreamCard[]) {
  * @returns Stream[] filtered stream list
  */
 
-export function filterArchived(streams: StreamCard[]) {
-    streams = sortByDate(streams, 'asc')
-    let streamList = []
-
-    for (const stream of streams) {
-        if (stream.start_date.diffNow().as('milliseconds') <= 0 || !stream.live) {
-            streamList.push(stream)
-        }
-    }
+export function filterArchived(streams: StreamCard[]): StreamCard[] {
+    const streamList = sortByDate(streams, 'asc').filter(
+        (stream) => stream.start_date.diffNow().as('milliseconds') <= 0 || !stream.live
+    )
 
     return streamList;
 }
 
-export function sortByDate(streams: StreamCard[], order: 'asc' | 'desc') {
+/**
+ * filter out streams with a different org_name
+ * @returns Stream[] filtered stream list
+ */
+
+export function filterOrg(streams: StreamCard[], orgName: string): StreamCard[] {
+    return streams.filter(
+        (stream) => {
+            return stream.org_name.toLowerCase() === orgName.toLowerCase()
+        }
+    )
+}
+
+/**
+ * filter out streams with a different org_name
+ * @returns Stream[] filtered stream list
+ */
+
+export function filterGroup(streams: StreamCard[], groupName: string): StreamCard[] {
+    const group = groups[groupName].map(
+        (groupName) => groupName.toLowerCase()
+    );
+
+    return streams.filter(
+        (stream) => group.includes(stream.group_name.toLowerCase())
+    )
+}
+
+
+/**
+ * Sort a StreamCard[] by date
+ * @param streams unsorted StreamCard[]
+ * @param order 'asc' | 'desc'
+ * @returns sorted StreamCard[]
+ */
+
+export function sortByDate(streams: StreamCard[], order: 'asc' | 'desc'): StreamCard[] {
     return streams.sort(
         (streamA: StreamCard, streamB: StreamCard) => {
             const startDateA = streamA.start_date;

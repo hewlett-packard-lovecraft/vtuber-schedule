@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import { Card, Col, Row } from 'react-bootstrap'
 import { StreamCard } from '../../types/types'
 import './CardContainer.css'
@@ -28,7 +27,7 @@ function CardContainer(props: ICardContainerProps) {
                                 <Card key={`card-${stream.youtube_id}`} border={stream.live ? 'danger' : ''}>
                                     <Card.Header>{`${timeDiff.hours >= 0 ? `In ${absTimeDiff} hours` : `${absTimeDiff} hour(s) ago`} (${stream.start_date.toFormat('HH:mm')})`}</Card.Header>
                                     <a href={stream.url}>
-                                        <Card.Img key={`card-img-${stream.youtube_id}`} variant="top" src={stream.thumbnail} />
+                                        <Card.Img loading="lazy" key={`card-img-${stream.youtube_id}`} variant="top" src={stream.thumbnail} />
                                     </a>
                                     <Card.Body key={`card-body-${stream.youtube_id}`}>
                                         <Card.Subtitle key={`card-title-${stream.youtube_id}`} >{stream.title}</Card.Subtitle>
